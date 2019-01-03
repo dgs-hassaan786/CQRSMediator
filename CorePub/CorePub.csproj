@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CorePub.Foundation\CorePub.Foundation.csproj" />
     <ProjectReference Include="..\CorePub.Repositories\CorePub.Repositories.csproj" />
   </ItemGroup>
 

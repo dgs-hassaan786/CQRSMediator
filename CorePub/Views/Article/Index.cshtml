@@ -3,24 +3,31 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<table id="tbl-Articles">
-    <thead>
-        <tr>
-            <td>Title</td>
-            <td>Author</td>
-            <td>Description</td>
-            <td>Genre</td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var a in Model)
-        {
-            <tr>
-                <td>@a.Title</td>
-                <td>@a.Author</td>
-                <td>@a.Description</td>
-                <td>@string.Join(',', a.Genre)</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row">
+
+    <div class="col-md-6">
+        <table id="tbl-Articles" class="table table-responsive table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <td>Title</td>
+                    <td>Author</td>
+                    <td>Description</td>
+                    <td>Genre</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@a.Title</td>
+                        <td>@a.Author</td>
+                        <td>@a.Description</td>
+                        <td>@string.Join(',', a.Genre)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer> &copy; @ViewBag.AppVersion</footer>
