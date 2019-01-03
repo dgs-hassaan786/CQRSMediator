@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Articles\Commands\" />
+    <Folder Include="Base\" />
+  </ItemGroup>
+
 </Project>
