@@ -9,4 +9,9 @@
     <Folder Include="Base\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="6.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="6.0.1" />
+  </ItemGroup>
+
 </Project>

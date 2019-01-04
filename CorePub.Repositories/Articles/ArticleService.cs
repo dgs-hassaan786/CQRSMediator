@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CorePub.Repositories.Articles.Queries
 {
-    public class ArticleReadingService : IGetArticle
+    public class ArticleService :  IArticleService  //IRequestHandler<IArticleService,List<ArticleDto>>
     {
         private static List<Article> _articles = new List<Article>()
         {
@@ -68,6 +68,6 @@ namespace CorePub.Repositories.Articles.Queries
                 Title = x.Title,
                 UId = x.UId
             }).ToList());
-        }
+        }        
     }
 }
