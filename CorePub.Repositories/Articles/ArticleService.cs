@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CorePub.Repositories.Articles.Queries
 {
-    public class ArticleService :  IArticleService  //IRequestHandler<IArticleService,List<ArticleDto>>
+    public class ArticleService :  IArticleService  
     {
         private static List<Article> _articles = new List<Article>()
         {
@@ -18,6 +18,15 @@ namespace CorePub.Repositories.Articles.Queries
                 Description = "First Article",
                 Genre =  new [] { "Motivation" },
                 Title = "How to motivate yourself?",
+                Id = 1,
+                UId = Guid.NewGuid().ToString()
+            },
+            new Article()
+            {
+                Author = "Paul Cohleo",
+                Description = "Eleven Minutes is a 2003 novel by Brazilian novelist Paulo Coelho that recounts the experiences of a young Brazilian prostitute and her journey to self-realisation through sexual experience.",
+                Genre =  new [] { "Motivational", "Love", "Enthusiasm", "self-realisation" },
+                Title = "Eleven Minutes",
                 Id = 1,
                 UId = Guid.NewGuid().ToString()
             }
@@ -46,7 +55,7 @@ namespace CorePub.Repositories.Articles.Queries
             }).FirstOrDefault());
         }
 
-        public Task<ArticleDto> GetById(string uId)
+        public Task<ArticleDto> GetByUId(string uId)
         {
             return Task.FromResult(_articles.Where(x => x.UId == uId).Select(x => new ArticleDto()
             {
@@ -60,7 +69,7 @@ namespace CorePub.Repositories.Articles.Queries
 
         public Task<List<ArticleDto>> GetByName(string name)
         {
-            return Task.FromResult(_articles.Where(x => x.Title == name).Select(x => new ArticleDto()
+            return Task.FromResult(_articles.Where(x => x.Title.ToLowerInvariant().Contains(name.ToLowerInvariant())).Select(x => new ArticleDto()
             {
                 Author = x.Author,
                 Description = x.Description,
