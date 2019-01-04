@@ -1,4 +1,5 @@
-﻿@model CorePub.ViewModels.CreateArticle;
+﻿
+@model CorePub.ViewModels.CreateArticle;
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -11,13 +12,13 @@
 </div>
 
 
-<div class="col-md-8 order-md-1" >
+<div class="col-md-8 order-md-1">
     <h4 class="mb-3">General Information</h4>
-    <form class="needs-validation" method="post" asp-controller="Article" asp-action="CreateArticle">
+    <form class="needs-validation" method="post" asp-controller="Article" asp-action="Create">
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="title">Title</label>
-                <input asp-for="@Model.CreateArticleModel.Title" class="form-control" required placeholder="provide the title of the article" type="text"/>
+                <input asp-for="@Model.CreateArticleModel.Title" class="form-control" required placeholder="provide the title of the article" type="text" />
                 <div class="invalid-feedback">
                     Article Title is required.
                 </div>
@@ -33,8 +34,8 @@
 
         <h4 class="mb-3">Genre Information</h4>
 
-        <div class="mb-3">            
-            <input asp-for="@Model.CreateArticleModel.Genre" class="form-control" required placeholder="provide genre for the article" type="text"/>
+        <div class="mb-3">
+            <input asp-for="@Model.CreateArticleModel.Genre" class="form-control" required placeholder="provide genre for the article" type="text" />
             <div class="invalid-feedback">
                 Please enter the genre of the article.
             </div>
@@ -42,7 +43,7 @@
 
         <h4 class="mb-3">Description</h4>
 
-        <div class="mb-3">            
+        <div class="mb-3">
             <textarea asp-for="@Model.CreateArticleModel.Description" class="form-control" placeholder="few words about the article"></textarea>
             <div class="invalid-feedback">
                 Please enter the few words about the article.

@@ -50,14 +50,15 @@ namespace CorePub.Controllers
             ViewBag.AppVersion = _appSettings.ApplicationSettings.Version;
             return View("ViewOnly", viewModel);
         }
-        
+
+        [HttpGet]
         public IActionResult Create()
         {            
             return View("CreateArticle", new CreateArticle());
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateArticle(CreateArticle dto)
+        public async Task<IActionResult> Create(CreateArticle dto)
         {
             var commandResult = await _mediator.Send(new CreateArticleCommand(dto.CreateArticleModel));
             dto.CommandResult = commandResult;
