@@ -1,5 +1,7 @@
 ﻿using CorePub.Foundation.ConfigurationProvider;
+using CorePub.Repositories.Articles.Commands;
 using CorePub.Repositories.Articles.Queries;
+using CorePub.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -47,6 +49,19 @@ namespace CorePub.Controllers
             ViewBag.PageTitle = "Article";
             ViewBag.AppVersion = _appSettings.ApplicationSettings.Version;
             return View("ViewOnly", viewModel);
+        }
+        
+        public IActionResult Create()
+        {            
+            return View("CreateArticle", new CreateArticle());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateArticle(CreateArticle dto)
+        {
+            var commandResult = await _mediator.Send(new CreateArticleCommand(dto.CreateArticleModel));
+            dto.CommandResult = commandResult;
+            return View("CreateArticle", dto);
         }
 
     }

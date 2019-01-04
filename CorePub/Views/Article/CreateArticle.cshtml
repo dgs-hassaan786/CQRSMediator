@@ -1,0 +1,54 @@
+﻿@model CorePub.ViewModels.CreateArticle;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="py-5 text-center">
+    <img class="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+    <h2>Add a new Article</h2>
+    <p class="lead">Create a new article just by filling the information below.</p>
+</div>
+
+
+<div class="col-md-8 order-md-1" >
+    <h4 class="mb-3">General Information</h4>
+    <form class="needs-validation" method="post" asp-controller="Article" asp-action="CreateArticle">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="title">Title</label>
+                <input asp-for="@Model.CreateArticleModel.Title" class="form-control" required placeholder="provide the title of the article" type="text"/>
+                <div class="invalid-feedback">
+                    Article Title is required.
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="lastName">Author Name</label>
+                <input asp-for="@Model.CreateArticleModel.Author" class="form-control" required placeholder="provide author name for the article" type="text" />
+                <div class="invalid-feedback">
+                    Author name is required.
+                </div>
+            </div>
+        </div>
+
+        <h4 class="mb-3">Genre Information</h4>
+
+        <div class="mb-3">            
+            <input asp-for="@Model.CreateArticleModel.Genre" class="form-control" required placeholder="provide genre for the article" type="text"/>
+            <div class="invalid-feedback">
+                Please enter the genre of the article.
+            </div>
+        </div>
+
+        <h4 class="mb-3">Description</h4>
+
+        <div class="mb-3">            
+            <textarea asp-for="@Model.CreateArticleModel.Description" class="form-control" placeholder="few words about the article"></textarea>
+            <div class="invalid-feedback">
+                Please enter the few words about the article.
+            </div>
+        </div>
+        <hr class="mb-4">
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Create</button>
+    </form>
+</div>
