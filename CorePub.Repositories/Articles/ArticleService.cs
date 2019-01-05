@@ -82,12 +82,12 @@ namespace CorePub.Repositories.Articles.Queries
             }).ToList());
         }
 
-        public Task<string> CreateArticle(CreateArticleCommandDto dto)
+        public Task CreateArticle(CreateArticleCommandDto dto, string guid)
         {
             var articleAlreadyExistQuery = from a in _articles
                                            where a.Author.ToLowerInvariant() == dto.Author.ToLower() && a.Title.ToLowerInvariant() == dto.Title.ToLowerInvariant()
                                            select a;
-            if(articleAlreadyExistQuery.FirstOrDefault() != null)
+            if (articleAlreadyExistQuery.SingleOrDefault() != null)
             {
                 throw new AlreadyExistException($"Already exist an article");
             }
@@ -96,16 +96,15 @@ namespace CorePub.Repositories.Articles.Queries
                 var newArticle = new Article()
                 {
                     Author = dto.Author,
-                    Description = dto.Author,
-                    Genre = dto.Genre.Split(','),
+                    Description = dto.Description,
+                    Genre = dto.Genre.Split(',').Select(x=> x.Trim()).ToArray(),
                     Title = dto.Title,
-                    UId = Guid.NewGuid().ToString(),
+                    UId = guid,
                     Id = _articles.Count + 1
                 };
                 _articles.Add(newArticle);
-
-                return Task.FromResult(newArticle.UId);
             }
+            return Task.FromResult(0);
 
         }
 

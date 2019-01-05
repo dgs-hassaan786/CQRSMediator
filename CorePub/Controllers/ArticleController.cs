@@ -53,16 +53,27 @@ namespace CorePub.Controllers
 
         [HttpGet]
         public IActionResult Create()
-        {            
+        {
             return View("CreateArticle", new CreateArticle());
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateArticle dto)
         {
-            var commandResult = await _mediator.Send(new CreateArticleCommand(dto.CreateArticleModel));
-            dto.CommandResult = commandResult;
-            return View("CreateArticle", dto);
+            try
+            {
+                var createCmd = new CreateArticleCommand(dto.CreateArticleModel);
+                await _mediator.Send(createCmd);
+
+                return RedirectToAction("Index");
+            }
+            catch (System.Exception)
+            {
+
+                return View("CreateArticle", dto);
+            }
+
+            
         }
 
     }

@@ -10,7 +10,7 @@ namespace CorePub.Repositories.Articles.IProviders
         Task<ArticleDto> GetById(long id);
         Task<ArticleDto> GetByUId(string uId);
 
-        Task<string> CreateArticle(CreateArticleCommandDto dto);
+        Task CreateArticle(CreateArticleCommandDto dto, string guid);
         Task UpdateArticle(ArticleDto dto);
         Task RemoveArticle(string uid);
     }

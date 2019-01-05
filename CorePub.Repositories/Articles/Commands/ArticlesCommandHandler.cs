@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CorePub.Repositories.Articles.Commands
 {
-    public class ArticlesCommandHandler : IRequestHandler<CreateArticleCommand, CommandResult>
+    public class ArticlesCommandHandler : IRequestHandler<CreateArticleCommand> //, CommandResult
     {
         private IArticleService _articleService;
 
@@ -18,23 +18,32 @@ namespace CorePub.Repositories.Articles.Commands
             _articleService = articleService;
         }
 
-        public async Task<CommandResult> Handle(CreateArticleCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateArticleCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var creationResult = await _articleService.CreateArticle(request.ArticleModel);
-                return CommandResult.Success(creationResult);
-            }         
-            catch(AlreadyExistException ex)
-            {
+            await _articleService.CreateArticle(request.ArticleModel, request.Uid);
 
-                return CommandResult.Error(new CreateCommentException(ex.Message, ex));
-            }
-            catch (Exception ex)
-            {
-
-                return CommandResult.Error(new CreateCommentException("There was an error in creating the article", ex));
-            }
+            return Unit.Value;
         }
+
+        //public async Task<CommandResult> Handle(CreateArticleCommand request, CancellationToken cancellationToken)
+        //{
+        //    try
+        //    {
+        //        var creationResult = await _articleService.CreateArticle(request.ArticleModel);
+        //        return CommandResult.Success(creationResult);
+        //    }         
+        //    catch(AlreadyExistException ex)
+        //    {
+
+        //        return CommandResult.Error(new CreateCommentException(ex.Message, ex));
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        return CommandResult.Error(new CreateCommentException("There was an error in creating the article", ex));
+        //    }
+        //}
+
+
     }
 }
