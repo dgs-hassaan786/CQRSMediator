@@ -5,6 +5,7 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A8295F22-9FE5-42CB-A966-4695E0DAB1D7}"
 	ProjectSection(SolutionItems) = preProject
+		Couchbase-Queries.txt = Couchbase-Queries.txt
 		CQRS Architecture Diagram.pptx = CQRS Architecture Diagram.pptx
 		global.json = global.json
 		README.md = README.md

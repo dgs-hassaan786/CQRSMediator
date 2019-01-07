@@ -1,0 +1,20 @@
+# Insert a new article query
+
+INSERT INTO `articles-bucket` (KEY, VALUE) VALUES ("k1",
+{ "Author" : "Hassaan",
+                "Description" : "First Article",
+                "Genre" :  ["Motivation"],
+                "Title" : "How to motivate yourself?",
+                "Id" : 1,
+                "UId" : "5172A393-326A-46B2-8397-1B21433B5A19"
+      }) RETURNING *
+
+
+# Index creation query
+
+CREATE PRIMARY INDEX `articles-bucket-primary-index` ON `articles-bucket` USING GSI;
+
+
+# Select query
+
+select * from `articles-bucket`
