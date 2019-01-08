@@ -1,6 +1,7 @@
 ﻿using CorePub.Foundation.ConfigurationProvider;
 using CorePub.Repositories.Articles.IProviders;
 using CorePub.Repositories.Articles.Queries;
+using CorePub.Repositories.Common;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -11,10 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector.Lifestyles;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace CorePub.Configurations.Startup
+namespace CorePub.Configurations.Shared.Startup
 {
     public partial class ConfigurationExtensions
     {
@@ -34,15 +36,34 @@ namespace CorePub.Configurations.Startup
 
             // or register MailSettings as singleton in the container.
             AppSettings appSettings = configuration.Get<AppSettings>();
-            container.RegisterInstance(appSettings);
+            //container.RegisterInstance(appSettings);
+
+            services.AddSingleton(appSettings);
 
             //Enable CrossWiring in the application
             services.EnableSimpleInjectorCrossWiring(container);
 
             // Wrap AspNet requests into Simpleinjector's scoped lifestyle
             services.UseSimpleInjectorAspNetRequestScoping(container);
+
+            services.AddTransient<MockArticleService>();
+            services.AddTransient<ArticleCouchService>();
             
-            services.AddTransient<IArticleService, ArticleService>();
+            //services.AddTransient<IArticleService, MockArticleService>();
+
+            services.AddTransient<Func<ArticleDependenciesType, IArticleService>>(serviceProvider => key =>
+            {
+                switch (key)
+                {
+                    case ArticleDependenciesType.Mock:
+                        return serviceProvider.GetService<MockArticleService>();
+                    case ArticleDependenciesType.Couchbase:
+                        return serviceProvider.GetService<ArticleCouchService>();                    
+                    default:
+                        throw new KeyNotFoundException(); // or maybe return null, up to you
+                }
+            });
+
         }
 
 

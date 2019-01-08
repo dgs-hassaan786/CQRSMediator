@@ -1,9 +1,8 @@
-﻿using CorePub.Repositories.Articles.IProviders;
+﻿using CorePub.Foundation.ConfigurationProvider;
+using CorePub.Repositories.Articles.IProviders;
 using CorePub.Repositories.Common;
 using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,9 +12,16 @@ namespace CorePub.Repositories.Articles.Commands
     {
         private IArticleService _articleService;
 
-        public ArticlesCommandHandler(IArticleService articleService)
+        public ArticlesCommandHandler(Func<ArticleDependenciesType, IArticleService> articleService, AppSettings settings)
         {
-            _articleService = articleService;
+            if (settings.ApplicationSettings.IsMock)
+            {
+                _articleService = articleService(ArticleDependenciesType.Mock);
+            }
+            else
+            {
+                _articleService = articleService(ArticleDependenciesType.Couchbase);
+            }
         }
 
         public async Task<Unit> Handle(CreateArticleCommand request, CancellationToken cancellationToken)

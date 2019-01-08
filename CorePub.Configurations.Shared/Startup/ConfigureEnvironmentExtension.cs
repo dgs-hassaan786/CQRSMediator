@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
-namespace CorePub.Configurations.Startup
+namespace CorePub.Configurations.Shared.Startup
 {
     public partial class ConfigurationExtensions
     {

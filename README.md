@@ -14,3 +14,6 @@ Query is any operation which only access the object rather than modifying it or 
 The pure CQRS could be implemented via Event Registration and Handlers, but here we are using a Mediator pattern via Mediatr implementation which provides us interfaces of IRequest and IRequestHandler. 
 
 If you go through the initial commits then you will find the repository pattern implementation. We have used Repositories as a service for the Queries and Command.
+
+# CouchBase as DB
+We are using the CouchBase as a database provider. In the coming series we will configure multiple data sources.

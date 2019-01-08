@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CorePub.Repositories.Articles.Queries
 {
-    public class ArticleService : IArticleService
+    public class MockArticleService : IArticleService
     {
         private static List<Article> _articles = new List<Article>()
         {

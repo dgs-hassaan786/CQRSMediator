@@ -1,23 +1,33 @@
-﻿using CorePub.Repositories.Articles.Dtos;
+﻿using CorePub.Foundation.ConfigurationProvider;
+using CorePub.Repositories.Articles.Dtos;
 using CorePub.Repositories.Articles.IProviders;
+using CorePub.Repositories.Common;
 using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CorePub.Repositories.Articles.Queries
 {
-    public class GetArticlesHandler : 
+    public class GetArticlesHandler :
         IRequestHandler<GetAllArticlesQuery, List<ArticleDto>>,
-        IRequestHandler<GetArticleByIdQuery,ArticleDto>,
+        IRequestHandler<GetArticleByIdQuery, ArticleDto>,
         IRequestHandler<GetArticlesByNameQuery, List<ArticleDto>>,
-        IRequestHandler<GetArticleByUIdQuery,ArticleDto>
+        IRequestHandler<GetArticleByUIdQuery, ArticleDto>
     {
         private IArticleService _articleService;
-      
-        public GetArticlesHandler(IArticleService articleService)
+
+        public GetArticlesHandler(Func<ArticleDependenciesType, IArticleService> articleService, AppSettings settings)
         {
-            _articleService = articleService;
+            if (settings.ApplicationSettings.IsMock)
+            {
+                _articleService = articleService(ArticleDependenciesType.Mock);
+            }
+            else
+            {
+                _articleService = articleService(ArticleDependenciesType.Couchbase);
+            }
         }
 
         public async Task<List<ArticleDto>> Handle(GetAllArticlesQuery request, CancellationToken cancellationToken)

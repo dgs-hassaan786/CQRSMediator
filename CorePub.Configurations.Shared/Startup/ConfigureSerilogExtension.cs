@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace CorePub.Configurations.Startup
+namespace CorePub.Configurations.Shared.Startup
 {
     public partial class ConfigurationExtensions
     {

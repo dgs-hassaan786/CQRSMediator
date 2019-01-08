@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CorePub.Configurations.Shared.Formatters;
+using CorePub.Foundation.ConfigurationProvider;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CorePub.Configurations.Startup
+namespace CorePub.Configurations.Shared.Startup
 {
     public static partial class ConfigurationExtensions
     {
@@ -11,13 +14,21 @@ namespace CorePub.Configurations.Startup
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection ConfigureMvc(this IServiceCollection services)
+        public static IServiceCollection ConfigureMvc(this IServiceCollection services, IConfiguration configuration)
         {
             //So we have added the MVC in the pipeline along with the options                        
             services.AddMvc(options =>
             {
                 //We are globally setting the AutoValidateAntiforgeryTokenAttribute at the runtime
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+
+                AppSettings appSettings = configuration.Get<AppSettings>();
+
+                if (appSettings.ApplicationSettings.IsPascalCaseFormattingToUse)
+                {
+                    options.OutputFormatters.Add(new PascalCaseFormatter());
+                }
+
             })
 
             //We are adding the Localization based on the language globally 
@@ -57,6 +68,22 @@ namespace CorePub.Configurations.Startup
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            return app;
+        }
+
+
+        /// <summary>
+        /// This extension is used for adding the routing functionality in the MVC application
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder ConfigureWebApiRouting(this IApplicationBuilder app)
+        {
+            app.UseStaticFiles();
+
+            //Uncomment this line of code if you wish to use the MVC with the default routing
+            app.UseMvc();                
+
             return app;
         }
     }
