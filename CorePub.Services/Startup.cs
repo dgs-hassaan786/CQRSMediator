@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CorePub.Configurations.Shared.Startup;
+﻿using CorePub.Configurations.Shared.Startup;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SimpleInjector;
 
 namespace CorePub.Services
@@ -31,6 +26,7 @@ namespace CorePub.Services
             services.ConfigureMvc(_configuration);
             services.ConfigureSimpleInjector(_container, _configuration);
             services.ConfigureMedaitR();
+            services.ConfigureSwagger(_configuration);
             services.ConfigureCouchBase(_configuration);
             services.AddMvc();
         }
@@ -41,10 +37,11 @@ namespace CorePub.Services
             app.ConfigureEnvironment(env);
             app.ConfigureWebApiRouting();
             app.InjectSimpleInjectorDependecy(_container);
-
             loggerFactory.ConfigureSerilog();
-
+            app.InjectSwagger();
             app.ClearCouchBaseResources(applicationLifetime);
         }
+
+       
     }
 }
