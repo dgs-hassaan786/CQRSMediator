@@ -17,7 +17,7 @@ namespace CorePub.Foundation.ConfigurationProvider
         public string Version { get; set; }
         public string Environment { get; set; }
         public bool IsMock { get; set; } = true;
-        public bool IsPascalCaseFormattingToUse { get; set; } = true;
+        public bool IsCamelCaseFormattingToUse { get; set; } = false;
     }
 
     public class DbProviders

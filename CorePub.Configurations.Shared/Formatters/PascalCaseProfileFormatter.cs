@@ -6,9 +6,9 @@ using Microsoft.Net.Http.Headers;
 
 namespace CorePub.Configurations.Shared.Formatters
 {
-    public class PascalCaseFormatter : JsonOutputFormatter
+    public class PascalCaseProfileFormatter : JsonOutputFormatter
     {
-        public PascalCaseFormatter() : base(new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() }, ArrayPool<char>.Shared)
+        public PascalCaseProfileFormatter() : base(new JsonSerializerSettings { ContractResolver = new DefaultContractResolver() }, ArrayPool<char>.Shared)
         {
             SupportedMediaTypes.Clear();
             MediaTypeHeaderValue item = MediaTypeHeaderValue.Parse("application/json;profile=\"https://en.wikipedia.org/wiki/PascalCase\"");

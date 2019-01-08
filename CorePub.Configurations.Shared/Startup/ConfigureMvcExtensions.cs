@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Serialization;
 
 namespace CorePub.Configurations.Shared.Startup
 {
@@ -21,15 +22,17 @@ namespace CorePub.Configurations.Shared.Startup
             {
                 //We are globally setting the AutoValidateAntiforgeryTokenAttribute at the runtime
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-
+            })
+            .AddJsonOptions(options =>
+            {
                 AppSettings appSettings = configuration.Get<AppSettings>();
 
-                if (appSettings.ApplicationSettings.IsPascalCaseFormattingToUse)
+                if (appSettings.ApplicationSettings.IsCamelCaseFormattingToUse)
                 {
-                    options.OutputFormatters.Add(new PascalCaseFormatter());
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 }
-
             })
+            
 
             //We are adding the Localization based on the language globally 
             //via AddViewLocalization() extension
@@ -82,7 +85,7 @@ namespace CorePub.Configurations.Shared.Startup
             app.UseStaticFiles();
 
             //Uncomment this line of code if you wish to use the MVC with the default routing
-            app.UseMvc();                
+            app.UseMvc();
 
             return app;
         }
