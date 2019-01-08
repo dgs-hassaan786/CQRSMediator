@@ -35,14 +35,6 @@ namespace CorePub.Controllers
             return View("Index", viewModel);
         }
 
-        public async Task<IActionResult> GetById(long id)
-        {
-            var viewModel = await _mediator.Send(new GetArticleByIdQuery(id));
-            ViewBag.PageTitle = "Article";
-            ViewBag.AppVersion = _appSettings.ApplicationSettings.Version;
-            return View("ViewOnly", viewModel);
-        }
-
         public async Task<IActionResult> GetByUId(string uid)
         {
             var viewModel = await _mediator.Send(new GetArticleByUIdQuery(uid));

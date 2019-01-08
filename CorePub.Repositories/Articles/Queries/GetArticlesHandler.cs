@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 namespace CorePub.Repositories.Articles.Queries
 {
     public class GetArticlesHandler :
-        IRequestHandler<GetAllArticlesQuery, List<ArticleDto>>,
-        IRequestHandler<GetArticleByIdQuery, ArticleDto>,
+        IRequestHandler<GetAllArticlesQuery, List<ArticleDto>>,        
         IRequestHandler<GetArticlesByNameQuery, List<ArticleDto>>,
         IRequestHandler<GetArticleByUIdQuery, ArticleDto>
     {
@@ -42,12 +41,8 @@ namespace CorePub.Repositories.Articles.Queries
 
         public async Task<List<ArticleDto>> Handle(GetArticlesByNameQuery request, CancellationToken cancellationToken)
         {
-            return await _articleService.GetByName(request.Name);
+            return await _articleService.GetByTitle(request.Name);
         }
-
-        public async Task<ArticleDto> Handle(GetArticleByIdQuery request, CancellationToken cancellationToken)
-        {
-            return await _articleService.GetById(request.Id);
-        }
+        
     }
 }

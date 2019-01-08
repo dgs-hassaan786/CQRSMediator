@@ -6,8 +6,7 @@ namespace CorePub.Repositories.Articles.IProviders
     public interface IArticleService 
     {
         Task<List<ArticleDto>> GetAll();
-        Task<List<ArticleDto>> GetByName(string name);
-        Task<ArticleDto> GetById(long id);
+        Task<List<ArticleDto>> GetByTitle(string name);        
         Task<ArticleDto> GetByUId(string uId);
 
         Task CreateArticle(CreateArticleCommandDto dto, string guid);

@@ -4,6 +4,10 @@ using CorePub.Repositories.Articles.Dtos;
 using CorePub.Repositories.Articles.IProviders;
 using CorePub.Repositories.Articles.Models;
 using CorePub.Repositories.Common;
+using Couchbase;
+using Couchbase.Core;
+using Couchbase.N1QL;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,102 +18,74 @@ namespace CorePub.Repositories.Articles.Queries
     public class ArticleCouchService : IArticleService
     {
         private IBucketService _bucketService;
-        
-        private static List<Article> _articles = new List<Article>()
-        {
-            new Article()
-            {
-                Author = "Hassaan",
-                Description = "First Article",
-                Genre =  new [] { "Motivation" },
-                Title = "How to motivate yourself?",
-                Id = 1,
-                UId = Guid.NewGuid().ToString()
-            },
-            new Article()
-            {
-                Author = "Paul Cohleo",
-                Description = "Eleven Minutes is a 2003 novel by Brazilian novelist Paulo Coelho that recounts the experiences of a young Brazilian prostitute and her journey to self-realisation through sexual experience.",
-                Genre =  new [] { "Motivational", "Love", "Enthusiasm", "self-realisation" },
-                Title = "Eleven Minutes",
-                Id = 2,
-                UId = Guid.NewGuid().ToString()
-            }
-        };
+        private IBucket _bucket;
 
         public ArticleCouchService(IBucketService bucketService)
         {
             _bucketService = bucketService;
+            _bucket = _bucketService.Get(AbstractionsProvider.CouchBase.Commons.BucketsCollection.articles).GetBucket();
         }
 
         public async Task<List<ArticleDto>> GetAll()
         {
-            var bucket = _bucketService.Get(AbstractionsProvider.CouchBase.Commons.BucketsCollection.articles).GetBucket();
-            var query = $"SELECT UId, Title, Author, Description, Genre From `{CouchBaseBuckets.Article_Bucket}`";
-            var queryResult = await bucket.QueryAsync<ArticleDto>(query);
+            var query = $"SELECT uId as UId, title as Title,author as Author, description as Description, genre as Genre From `{CouchBaseBuckets.Article_Bucket}`"; //
+            var queryResult = await _bucket.QueryAsync<ArticleDto>(query);
             return queryResult.Rows;
         }
 
-        public Task<ArticleDto> GetById(long id)
+        public async Task<ArticleDto> GetById(long id)
         {
-            return Task.FromResult(_articles.Where(x => x.Id == id).Select(x => new ArticleDto()
-            {
-                Author = x.Author,
-                Description = x.Description,
-                Genre = x.Genre,
-                Title = x.Title,
-                UId = x.UId
-            }).FirstOrDefault());
+            var query = $"SELECT uId as UId, title as Title,author as Author, description as Description, genre as Genre From `{CouchBaseBuckets.Article_Bucket}` where Id = {id} "; //UId, Title, Author, Description, Genre
+            var queryResult = await _bucket.QueryAsync<ArticleDto>(query);
+            return queryResult.FirstOrDefault();
         }
 
-        public Task<ArticleDto> GetByUId(string uId)
+        public async Task<ArticleDto> GetByUId(string uId)
         {
-            return Task.FromResult(_articles.Where(x => x.UId == uId).Select(x => new ArticleDto()
-            {
-                Author = x.Author,
-                Description = x.Description,
-                Genre = x.Genre,
-                Title = x.Title,
-                UId = x.UId
-            }).FirstOrDefault());
+            var query = $"SELECT uId as UId, title as Title,author as Author, description as Description, genre as Genre From `{CouchBaseBuckets.Article_Bucket}` where UId = {uId} ";//UId, Title, Author, Description, Genre
+            var queryResult = await _bucket.QueryAsync<ArticleDto>(query);
+            return queryResult.FirstOrDefault();
         }
 
-        public Task<List<ArticleDto>> GetByName(string name)
+        public async Task<List<ArticleDto>> GetByTitle(string name)
         {
-            return Task.FromResult(_articles.Where(x => x.Title.ToLowerInvariant().Contains(name.ToLowerInvariant())).Select(x => new ArticleDto()
-            {
-                Author = x.Author,
-                Description = x.Description,
-                Genre = x.Genre,
-                Title = x.Title,
-                UId = x.UId
-            }).ToList());
+            var query = $"SELECT uId as UId, title as Title,author as Author, description as Description, genre as Genre From `{CouchBaseBuckets.Article_Bucket}` where Title Like '%{name}%' ";//UId, Title, Author, Description, Genre 
+            var queryResult = await _bucket.QueryAsync<ArticleDto>(query);
+            return queryResult.Rows;
         }
 
-        public Task CreateArticle(CreateArticleCommandDto dto, string guid)
+        public async Task CreateArticle(CreateArticleCommandDto dto, string guid)
         {
-            var articleAlreadyExistQuery = from a in _articles
-                                           where a.Author.ToLowerInvariant() == dto.Author.ToLower() && a.Title.ToLowerInvariant() == dto.Title.ToLowerInvariant()
-                                           select a;
-            if (articleAlreadyExistQuery.SingleOrDefault() != null)
+
+            var articleAlreadyExistQuery = new QueryRequest().Statement(
+                $"Select uId as UId from `{CouchBaseBuckets.Article_Bucket}` where author = $1 and LOWER(title) = $2"
+                ).AddPositionalParameter(dto.Author, dto.Title);
+
+            var q1Result = await _bucket.QueryAsync<ArticleDto>(articleAlreadyExistQuery);
+            if (q1Result.FirstOrDefault() != null)
             {
                 throw new AlreadyExistException($"Already exist an article");
             }
             else
             {
-                var newArticle = new Article()
+                var newArticle = new Document<Article>
                 {
-                    Author = dto.Author,
-                    Description = dto.Description,
-                    Genre = dto.Genre.Split(',').Select(x=> x.Trim()).ToArray(),
-                    Title = dto.Title,
-                    UId = guid,
-                    Id = _articles.Count + 1
+                    Id = Guid.NewGuid().ToString(),
+                    Content = new Article()
+                    {
+                        Author = dto.Author,
+                        Description = dto.Description,
+                        Genre = dto.Genre.Split(',').Select(x => x.Trim()).ToArray(),
+                        Title = dto.Title,
+                        UId = guid
+                    }
                 };
-                _articles.Add(newArticle);
-            }
-            return Task.FromResult(0);
 
+
+                var result = await _bucket.InsertAsync(newArticle);
+                if (result.Status != Couchbase.IO.ResponseStatus.Success)
+                    throw new Exception("There was an error", new Exception(JsonConvert.SerializeObject(result)));
+            }
         }
 
         public Task UpdateArticle(ArticleDto dto)
